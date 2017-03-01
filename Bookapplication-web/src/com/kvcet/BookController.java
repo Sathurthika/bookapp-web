@@ -1,6 +1,7 @@
 package com.kvcet;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,33 +10,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.revature.dao.DAObook;
-import com.revature.training.Book;
+import com.sathurthika.bookapp.dao.BookDAO;
+import com.sathurthika.bookapp.model.Book;
 
-/**
- * Servlet implementation class BookController
- */
 @WebServlet("/BookController")
 public class BookController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("book_id"));
+
 		String name = request.getParameter("book_name");
+		Float price = Float.parseFloat(request.getParameter("book_price"));
 
 		Book book = new Book();
-		book.setId(id);
 		book.setName(name);
+		book.setPrice(price);
 
-		DAObook dao = new DAObook();
-		dao.addbook(book);
+		BookDAO dao = new BookDAO();
+		dao.save(book);
 
-		// System.out.println(id + " " + name);
-		//
-		// request.setAttribute("name", name);
-		// request.setAttribute("id", id);
+		List<Book> books = dao.findAll();
 
 		RequestDispatcher rd = request.getRequestDispatcher("show.jsp");
+		request.setAttribute("books", books);
 		rd.forward(request, response);
 	}
 
